@@ -1,0 +1,109 @@
+Curso de Django (by Gregory Pacheco)
+https://www.youtube.com/watch?v=H8SrsRO5kMc&list=PLHWfNMxB2F4HdKbo8zdgXyxVDOxH429Ko&index=3
+https://www.youtube.com/watch?v=c24SQ6TPDDk&list=PLHWfNMxB2F4HdKbo8zdgXyxVDOxH429Ko&index=8
+
+Requisitos tech:
+- Python3 :: 
+  sudo apt-get install python3.6
+
+- Instalar venv Python :: 
+  sudo apt-get install python3.6-venv
+
+- Criar uma venv :: 
+  python3 -m venv myvenv
+
+- Aivar a venv ::
+  source myvenv/bin/activate
+  Passamos a operar dentro de um Virtual Enrimonment e tudo o que instalarmos fica apenas nesta pasta, não afetando o SO.
+  
+- Desativar a venv ::
+  deactivate --------> (dentro do pasta do projeto, onde tem ao lado a pasta env)
+
+- Instalar o Django dentro da venv ::
+  pip install django
+  pip install django --force
+
+Apresentou o seguinte erro ao tentar instalar sem o "--force":
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: django in /usr/local/lib/python3.6/dist-packages (3.0.3)
+Requirement already satisfied: pytz in /usr/lib/python3/dist-packages (from django) (2018.3)
+Requirement already satisfied: sqlparse>=0.2.2 in /usr/local/lib/python3.6/dist-packages (from django) (0.3.0)
+Requirement already satisfied: asgiref~=3.2 in /usr/local/lib/python3.6/dist-packages (from django) (3.2.3)
+
+Para testar (dentro do myenv):
+python3
+import django <--------------------- a partir daqui dava um erro "No module named django"
+django.VERSION
+(3, 0, 3, 'final', 0)
+
+Solução:
+python -m pip install django
+https://stackoverflow.com/questions/9462212/import-error-no-module-named-djang
+
+
+--- RESUMO DOS COMANDOS ---
+
+---------------------------------------------------------------
+Preparar todo o embiente a partir de um projeto Python
+---------------------------------------------------------------
+
+Supondo que não tem o Python e nem o Virtal Env instalado na máquina:
+
+sudo apt-get install python3.6          instala o Python
+sudo apt-get install python3.6-venv     instala o virtual env
+python3 -m venv myvenv                  cria um cirtual env com o nome myvenv
+source myvenv/bin/activate              init o myvenv
+pip install django --force              instala o django dentro do myvenv
+
+---------------------------------------------------------------
+Iniciar novo projeto Django
+---------------------------------------------------------------
+Dentro do virtual env ::
+django-admin startproject proj_test     Cria uma pasta proj_test com outra proj_test dentro
+django-admin startproject proj_test .   Cria uma pasta proj_test na pasta atual
+
+---------------------------------------------------------------
+Criar uma app
+---------------------------------------------------------------
+python manage.py startapp contas        criar app
+python manage.py migrate                init BD SQLite (por padrão)
+python manage.py runserver              init app
+python manage.py createsuperuser        cria um super user para logar na app (by app admin do Django)
+
+---------------------------------------------------------------
+Rodar o projeto depois que inicia o PC
+---------------------------------------------------------------
+
+A partir da pasta raiz do projeto onde está o ficheiro "manage.py":
+
+. venv/bin/activate
+OU
+source venv/bin/activate 
+    Deverá aparecer: (venv) dantiii@dantiii-X556URK:/mnt...
+python3 manage-py runserver
+    Starting development server at http://127.0.0.1:8000/
+
+
+---------------------------------------------------------------
+Templates
+---------------------------------------------------------------
+O Django espera que exista uma pasta chamada "templates" e outra com o mesmo nome da app dentro de template.
+Exemplo para uma app chamada Contas:
+contas
+    templates
+        contas
+            home.html
+            about.html
+
+
+---------------------------------------------------------------
+Documentação Django
+---------------------------------------------------------------
+
+URL dispatcher
+https://docs.djangoproject.com/en/3.0/topics/http/urls/
+
+Writing views
+https://docs.djangoproject.com/en/3.0/topics/http/views/
+
+
