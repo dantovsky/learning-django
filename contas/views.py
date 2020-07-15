@@ -32,3 +32,14 @@ def nova_transacao(request):
         # return render(request, 'contas/listagem.html')
 
     return render(request, 'contas/form.html', {'form': form})
+
+def update(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+
+    return render(request, 'contas/form.html', {'form': form})
