@@ -14,7 +14,9 @@
         {{ form.as_p }}
 
         <button type="submit">Salvar</button>
+        {% if pk %}
+            <a href="{% url 'url_delete' pk %}">Remover</a>
+        {% endif %}
     </form>
-
 </body>
 </html>

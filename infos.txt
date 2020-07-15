@@ -160,6 +160,253 @@ CRUD :: Create
 # ModelForm » https://docs.djangoproject.com/en/3.0/topics/forms/modelforms/
 Ter um form baseado em um model, o Django cria automaticamente todos os campos do form, cria suas validações.
 
+
+// --- form.py
+
+
+from django.forms import ModelForm
+from .models import Transacao
+
+class TransacaoForm(ModelForm):
+    # Classe de metadata que recebe um model e os fields que queremos que sejam mostrados
+    class Meta:
+        model = Transacao
+        fields = ['data', 'descricao', 'valor', 'observacoes', 'categoria']  # Com isto definiu-se um form que o Django vai criar todas as facilidades
+        # Agora, precisa adicionar este immport em views.py: from .form import TransacaoForm
+
+
+// --- utls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- viewspy
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+
+def nova_transacao(request):
+    form = TransacaoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+        # return listagem(request)
+        # return render(request, 'contas/listagem.html')
+
+    return render(request, 'contas/form.html', {'form': form})
+
+
+// --- form.html (template)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+    </form>
+
+</body>
+</html>
+
+
+---------------------------------------------------------------
+CRUD :: Update
+---------------------------------------------------------------
+
+
+// --- urls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),  # <---
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- views.py
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+import datetime
+from .models import Transacao
+
+def update(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+
+    return render(request, 'contas/form.html', {'form': form})
+
+
+// --- listagem.html (onde tem um link que envia para um URL "http://127.0.0.1:8000/update/ID"
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Listagem</title>
+</head>
+<body>
+    <h2>Listagem</h2>
+    <ul>
+        {% for transacao in transacoes %}
+        <li><a href="{% url 'url_update' transacao.id %}">{{ transacao.descricao }} - {{ transacao.data }} - {{ transacao.valor }} - {{ transacao.categoria }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'url_nova' %}">Novo</a>
+</body>
+</html>
+
+
+// --- form.html (form para atualizar o registo)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+    </form>
+
+</body>
+</html>
+
+
+---------------------------------------------------------------
+CRUD :: Delete
+---------------------------------------------------------------
+
+
+// --- urls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update, delete
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),
+    path('delete/<int:pk>', delete, name='url_delete'),  # <---
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- views.py
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+from .models import Transacao
+
+def update(request, pk):
+
+    data = {}
+
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+
+    data['form'] = form
+    # data['transacao'] = transacao
+    data['pk'] = pk  # <---
+    return render(request, 'contas/form.html', data)  # data || {'form': form}
+
+
+def delete(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    transacao.delete()
+    return redirect('url_home_listagem')  # send user again to the listing page
+
+
+// --- form.html (adicionado link para deletar o registo)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+        <a href="{% url 'url_delete' pk %}">Remover</a>
+    </form>
+</body>
+</html>
+
+
 ---------------------------------------------------------------
 Documentação Django
 ---------------------------------------------------------------

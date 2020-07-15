@@ -5,6 +5,7 @@ from .form import TransacaoForm
 import datetime
 from .models import Transacao
 
+
 # Create your views here.
 def home(request):
     data = {}
@@ -14,10 +15,12 @@ def home(request):
 
     return render(request, 'contas/home.html', data)  # HttpResponse(html)
 
+
 def listagem(request):
     data = {}
     data['transacoes'] = Transacao.objects.all()  # objects é um Manager
     return render(request, 'contas/listagem.html', data)
+
 
 # Manager :: uma classe que o Django implementa para todos os models, trazendo operacoes de BD:
 # all(), filter(), last(), first().
@@ -33,7 +36,11 @@ def nova_transacao(request):
 
     return render(request, 'contas/form.html', {'form': form})
 
+
 def update(request, pk):
+
+    data = {}
+
     # Get the transaction from BD
     transacao = Transacao.objects.get(pk=pk)
     form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
@@ -42,4 +49,14 @@ def update(request, pk):
         form.save()
         return redirect('url_home_listagem')
 
-    return render(request, 'contas/form.html', {'form': form})
+    data['form'] = form
+    # data['transacao'] = transacao
+    data['pk'] = pk
+    return render(request, 'contas/form.html', data)  # data || {'form': form}
+
+
+def delete(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    transacao.delete()
+    return redirect('url_home_listagem')  # send user again to the listing page
