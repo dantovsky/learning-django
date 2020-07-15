@@ -97,6 +97,62 @@ contas
 
 
 ---------------------------------------------------------------
+Modelos e Migrations
+---------------------------------------------------------------
+
+# Os relacionamentos de BD são basicamente 3:
+# - ForeignKey        => 1 -> m
+# - OneToOneField     => 1 -> 1
+# - ManytoManyField   => m -> m
+
+# Após a criação de um modelo:
+# - python3 manage.py makemigrations    => Criar o arquivo de migração
+# - python3 manage.py migrate           => Aplicar a criação da nova tabela no BD
+# - Registar o novo model em admin.py
+    # from .models import Transacao
+    # admin.site.register(Transacao)
+
+
+---------------------------------------------------------------
+Render Passando Dados para o Template
+---------------------------------------------------------------
+
+Uso do Jinja em template HTML do Django.
+
+// --- views.py
+
+from django.shortcuts import render
+from django.http import HttpResponse
+import datetime
+
+# Create your views here.
+def home(request):
+    data = {}
+    data['transacoes'] = ['t1', 't2', 't3']
+    data['now'] = datetime.datetime.now()
+    # html = "<html><body>It is now %s.</body></html>" % now
+
+    return render(request, 'contas/home.html', data)  # HttpResponse(html)
+
+// --- home.html
+
+<body>
+    <h1>Seja bem vindo!</h1>
+    <!-- Uso do Jinja para utilizar variáveis dentro do template HTML do Django -->
+    <p>Agora são {{ now }}</p>
+    <h2>Transações</h2>
+    <ul>
+        {% for transacao in transacoes %}
+            {% if transacao == 't1' %}
+                <li><b>{{ transacao }}</b></li>
+            {% else %}
+                <li>{{ transacao }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+
+---------------------------------------------------------------
 Documentação Django
 ---------------------------------------------------------------
 
@@ -106,4 +162,5 @@ https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Writing views
 https://docs.djangoproject.com/en/3.0/topics/http/views/
 
-
+Model field reference
+https://docs.djangoproject.com/en/3.0/ref/models/fields/

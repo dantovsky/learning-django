@@ -9,5 +9,17 @@
 </head>
 <body>
     <h1>Seja bem vindo!</h1>
+    <!-- Uso do Jinja para utilizar variáveis dentro do template HTML do Django -->
+    <p>Agora são {{ now }}</p>
+    <h2>Transações</h2>
+    <ul>
+        {% for transacao in transacoes %}
+            {% if transacao == 't1' %}
+                <li><b>{{ transacao }}</b></li>
+            {% else %}
+                <li>{{ transacao }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 </body>
 </html>
