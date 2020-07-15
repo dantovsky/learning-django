@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from .form import TransacaoForm
+
 import datetime
 from .models import Transacao
 
@@ -19,3 +21,14 @@ def listagem(request):
 
 # Manager :: uma classe que o Django implementa para todos os models, trazendo operacoes de BD:
 # all(), filter(), last(), first().
+
+def nova_transacao(request):
+    form = TransacaoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+        # return listagem(request)
+        # return render(request, 'contas/listagem.html')
+
+    return render(request, 'contas/form.html', {'form': form})

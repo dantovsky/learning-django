@@ -152,6 +152,14 @@ def home(request):
     </ul>
 </body>
 
+
+---------------------------------------------------------------
+CRUD :: Create
+---------------------------------------------------------------
+
+# ModelForm » https://docs.djangoproject.com/en/3.0/topics/forms/modelforms/
+Ter um form baseado em um model, o Django cria automaticamente todos os campos do form, cria suas validações.
+
 ---------------------------------------------------------------
 Documentação Django
 ---------------------------------------------------------------
